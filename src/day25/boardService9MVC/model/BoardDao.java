@@ -24,13 +24,29 @@ import java.util.ArrayList;
     [ 여러개 게시물 객체가 존재 했을때 ]
     point1 : 필드간의 구분을 ,(쉼표)로 한다.
     point2 : 객체간의 구분을 \n으로 한다.
-    예] "안녕하세요, 유재석, 1234\n 그래안녕, 강호동,4567"
+    예] 만일 게시물이 2개일때 "안녕하세요, 유재석, 1234\n그래안녕, 강호동,4567"
  */
 
 public class BoardDao {
     // ---- 싱글톤 ----
     private static BoardDao boardDao = new BoardDao();
-    private BoardDao(){}
+    private BoardDao(){
+        // 만약에 파일로드 하는데, 피일이 존재 하지 않으면
+            // [1] 파일 경로에 따른 파일 객체화
+        File file = new File("./src/day25/data.txt");
+        if( file.exists()) { // 지정한 경로에 파일이 있다
+            fileLoad(); // 파일로드
+        } else { // 지정한 경로에 파일이 없다
+            // 파일 생성
+            try {
+                file.createNewFile();
+            } catch ( IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // - 싱글톤(static)이 생성될 때 (프로그램이 실행될 때)
+
+    } //
     public static BoardDao getInstance() {
         return boardDao;
     }
@@ -52,7 +68,7 @@ public class BoardDao {
     }
 
     // 영구저장을 위한 게시물들을 파일에 저장하는 기능
-    public void fileSave() { // 게시물 등록을 성공했을때 지정한 함수 사용/호출
+    public void fileSave() { // 게시물 등록을 성공했을때 지정한 함수 사용/호출 // Dao 객체 (싱글톤) 생성될 때 메모장 불러오기
         // 여러개 개시물을 ArrayList<BoardDto> boardDB 하나의 문자열[String/CSV] 로 표현하는 방법
         // try{}catch(){} : try{} 예상치 못한 예외가 발생 했을때 지정된 catch 코드로 흐름을 이동하는 문법
         String outStr = "";
@@ -79,7 +95,7 @@ public class BoardDao {
     }
 
     // 영구저장 된 파일의 게시물들을 가져오는 기능
-    public void fileLoad() {
+    public void fileLoad() { // 프로그램이 실행 되었을때 1번만 실행 - JVM 실행도중 메모리를 저장하니까
         try {
             // [1] 파일 입력 객체 생성
             FileInputStream inputStream = new FileInputStream("./src/day25/data.txt");
@@ -91,13 +107,29 @@ public class BoardDao {
             // [4] 읽어온 바이트 배열을 문자열(String)으로 변환
             String inStr = new String(bytes);
             // 활용과제 : 파일로 부터 읽어온 문자열의 게시물 정보들을 다시 ArrayList<BoardDto> boardDB에 저장
-
+            // 목표 : 파일로 가져온 문자열 내 저장된 여라개 게시물들을 객체화 하고 게시물 객체를 리스트에 담자.
+            // [1] 객체 구분 문자(\n:임의) 문자열 분해, "문자열".split("기준문자") : 문자열내 기준문자 기준으로 분해 후 배열로 반환
+            // inStr = "안녕하세요, 유재석, 1234\n그래안녕, 강호동,4567"
+            //
+            // inStr.split("\n") -> ["안녕하세요, 유재석, 1234", "그래안녕,강호동,4567"]
+            String[] objStr = inStr.split("\n");
+            // [2] 객체 내 필드 구분 문자 ,(쉼표)
+            for(int i = 0; i <= objStr.length - 1; i++ ) {  // 마지막 줄 제외를 하기 위해 -1
+                // [3] 1개의 객체 필드 값 가져오기
+                String obj = objStr[i];
+                // [4] 문자열로 된 필드 값들을 객체로 변호나하기
+                String[] field = obj.split(",");
+                String content = field[0];
+                String writer = field[1];
+                int pwd = Integer.parseInt(field[2]); // String 타입을 int로 변환하는 방법, Integer.parseInt("문자열")
+                BoardDto boardDto = new BoardDto(content,writer,pwd);
+                // [5] 리스트에 담기
+                boardDB.add(boardDto);
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e ){
             e.printStackTrace();
         }
-
-
     }
 }
