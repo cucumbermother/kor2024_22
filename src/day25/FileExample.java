@@ -10,7 +10,7 @@ public class FileExample {
         try {
             // 예외가 발생 할 것 같은 코드(예상/) try{ } 안에서 작성.
             // 현재 프로잭트내 텍스트 파일 생성
-            FileOutputStream fileOutput = new FileOutputStream("./src/day25/test1.txt");
+            FileOutputStream fileOutput = new FileOutputStream("./src/day25/test3.txt");
             fileOutput.write("Hello Java!".getBytes()); // 10 바이트
 
             // fileOutput[객체].write[메소드](인자값1);
