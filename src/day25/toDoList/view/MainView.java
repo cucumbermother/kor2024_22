@@ -92,12 +92,14 @@ public class MainView {
         System.out.println("삭제 메뉴 입니다. 몇 번째 ToDo를 삭제하겠습니까?");
         int ch = sc.nextInt();
         try {
-            if (ch > 0 && ch <= TodoListDao.getInstance().toDoListDBInstance().size())
-            MainController.getInstance().deleteDoListDB(ch);
+            if (ch > 0 && ch <= TodoListDao.getInstance().toDoListDBInstance().size()){
+                MainController.getInstance().deleteDoListDB(ch);
+            }else{
+                System.out.println("범위를 벗어난 숫자입니다");
+            }
+
         } catch (IllegalArgumentException e ) {
             e.printStackTrace();
-            System.out.println("범위를 벗어난 숫자입니다");
         }
-
     }
 }
